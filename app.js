@@ -1,143 +1,200 @@
 // Masri Video AI
 // Front-end controller
 
-let selectedDuration = "30";
-let selectedRatio = "9:16";
+document.addEventListener("DOMContentLoaded", () => {
 
-// اختيار مدة الفيديو
-document.querySelectorAll(".duration").forEach((button) => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(".duration").forEach((b) => {
-      b.classList.remove("active");
+  let selectedDuration = "30";
+  let selectedRatio = "9:16";
+
+  const promptInput = document.getElementById("prompt");
+  const imageInput = document.getElementById("image");
+  const statusBox = document.getElementById("status");
+  const resultBox = document.getElementById("result");
+  const generateButton = document.getElementById("generate");
+
+  // اختيار مدة الفيديو
+  document.querySelectorAll(".duration").forEach((button) => {
+
+    button.addEventListener("click", () => {
+
+      document.querySelectorAll(".duration").forEach((btn) => {
+        btn.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      selectedDuration = button.dataset.value;
+
     });
 
-    button.classList.add("active");
-    selectedDuration = button.dataset.value;
   });
-});
 
-// اختيار أبعاد الفيديو
-document.querySelectorAll(".ratio").forEach((button) => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(".ratio").forEach((b) => {
-      b.classList.remove("active");
+
+  // اختيار أبعاد الفيديو
+  document.querySelectorAll(".ratio").forEach((button) => {
+
+    button.addEventListener("click", () => {
+
+      document.querySelectorAll(".ratio").forEach((btn) => {
+        btn.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      selectedRatio = button.dataset.value;
+
     });
 
-    button.classList.add("active");
-    selectedRatio = button.dataset.value;
   });
-});
 
-// معاينة الصورة
-const imageInput = document.getElementById("image");
 
-if (imageInput) {
-  imageInput.addEventListener("change", function (event) {
-    const file = event.target.files[0];
+  // رفع ومعاينة الصورة
+  if (imageInput) {
 
-    if (!file) return;
+    imageInput.addEventListener("change", (event) => {
 
-    const reader = new FileReader();
+      const file = event.target.files[0];
 
-    reader.onload = function (e) {
-      const upload = document.querySelector(".upload");
+      if (!file) return;
 
-      if (upload) {
-        upload.innerHTML = `
-          <img
-            src="${e.target.result}"
-            alt="الصورة المرجعية"
-            style="width:100%;height:100%;object-fit:contain;"
-          >
-        `;
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+
+        const uploadBox = document.querySelector(".upload");
+
+        if (uploadBox) {
+
+          uploadBox.innerHTML = `
+            <img
+              src="${e.target.result}"
+              alt="الصورة المرجعية"
+              style="
+                width:100%;
+                height:100%;
+                object-fit:contain;
+              "
+            >
+          `;
+
+        }
+
+      };
+
+      reader.readAsDataURL(file);
+
+    });
+
+  }
+
+
+  // زر إنشاء الفيديو
+  if (generateButton) {
+
+    generateButton.addEventListener("click", () => {
+
+      const prompt = promptInput
+        ? promptInput.value.trim()
+        : "";
+
+      // التأكد من وجود Prompt
+      if (!prompt) {
+
+        if (statusBox) {
+
+          statusBox.style.display = "block";
+
+          statusBox.innerHTML = `
+            ⚠️ من فضلك اكتب فكرة الفيديو أولًا.
+          `;
+
+        }
+
+        return;
+
       }
-    };
 
-    reader.readAsDataURL(file);
-  });
-}
 
-// إرسال طلب إنشاء الفيديو
-async function generateVideo() {
-  const promptElement = document.getElementById("prompt");
-  const status = document.getElementById("status");
+      // إظهار حالة التشغيل
+      if (statusBox) {
 
-  const prompt = promptElement
-    ? promptElement.value.trim()
-    : "";
+        statusBox.style.display = "block";
 
-  if (!prompt) {
-    alert("اكتب فكرة الفيديو الأول 💡");
-    return;
-  }
+        statusBox.innerHTML = `
+          ⏳ جاري تجهيز طلب الفيديو...
+          <br>
+          <small>المدة: ${selectedDuration} ثانية</small>
+          <br>
+          <small>المقاس: ${selectedRatio}</small>
+        `;
 
-  if (status) {
-    status.style.display = "block";
-    status.innerHTML = "⏳ جاري تجهيز الفيديو...";
-  }
+      }
 
-  const requestData = {
-    prompt: prompt,
-    duration: Number(selectedDuration),
-    ratio: selectedRatio,
-    language: "ar",
-    dialect: "egyptian"
-  };
 
-  console.log("Video request:", requestData);
+      // إظهار النتيجة التجريبية
+      if (resultBox) {
 
-  /*
-    في المرحلة القادمة هنربط العنوان ده بالـBackend الحقيقي:
+        resultBox.innerHTML = `
+          <div style="
+            margin-top:20px;
+            padding:20px;
+            border-radius:15px;
+            background:#151b2b;
+            border:1px solid #30394d;
+            text-align:center;
+          ">
 
-    POST /api/generate
+            <div style="font-size:40px;">
+              🎬
+            </div>
 
-    والـBackend هيقوم بـ:
-    1. تحويل البرومبت إلى سيناريو.
-    2. تقسيم السيناريو إلى مشاهد.
-    3. توليد المشاهد.
-    4. توليد الصوت باللهجة المصرية.
-    5. تجميع المشاهد والصوت.
-    6. إرجاع رابط الفيديو.
-  */
+            <h3 style="margin:10px 0;">
+              تم استلام طلبك ✅
+            </h3>
 
-  try {
-    const response = await fetch("/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestData)
+            <p style="
+              color:#aeb6c5;
+              line-height:1.7;
+            ">
+              ${escapeHTML(prompt)}
+            </p>
+
+            <p style="
+              color:#8f88ff;
+              margin-top:10px;
+            ">
+              محرك توليد الفيديو سيتم توصيله في الخطوة القادمة.
+            </p>
+
+          </div>
+        `;
+
+      }
+
+
+      // عرض البيانات في Console للتجربة
+      console.log({
+        prompt: prompt,
+        duration: selectedDuration,
+        ratio: selectedRatio,
+        language: "Arabic",
+        dialect: "Egyptian"
+      });
+
     });
 
-    if (!response.ok) {
-      throw new Error("Backend unavailable");
-    }
-
-    const result = await response.json();
-
-    if (result.video_url) {
-      status.innerHTML = `
-        ✅ الفيديو جاهز!<br><br>
-        <a
-          href="${result.video_url}"
-          target="_blank"
-          style="color:#8f88ff;font-weight:bold;"
-        >
-          ▶️ مشاهدة الفيديو
-        </a>
-      `;
-    } else {
-      throw new Error("No video URL");
-    }
-
-  } catch (error) {
-
-    console.log(error);
-
-    status.innerHTML = `
-      ⚙️ الواجهة جاهزة لاستقبال محرك الذكاء الاصطناعي.
-      <br><br>
-      سيتم تشغيل التوليد الحقيقي بعد ربط الـBackend.
-    `;
   }
+
+});
+
+
+// حماية النص الذي يكتبه المستخدم
+function escapeHTML(text) {
+
+  const div = document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+
 }
