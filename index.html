@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Masri Video AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #080b14;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      margin: auto;
+      padding: 30px 15px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #9da5b4;
+      margin-top: 10px;
+    }
+
+    .card {
+      background: #111725;
+      border: 1px solid #252d40;
+      border-radius: 20px;
+      padding: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #30394d;
+      background: #080b14;
+      color: white;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #6c63ff;
+    }
+
+    .section {
+      margin-top: 25px;
+    }
+
+    .upload {
+      height: 140px;
+      border: 2px dashed #3b4358;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      cursor: pointer;
+      color: #9da5b4;
+      overflow: hidden;
+    }
+
+    .upload span {
+      font-size: 35px;
+      margin-bottom: 8px;
+    }
+
+    .upload img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .options button {
+      background: #080b14;
+      color: white;
+      border: 1px solid #30394d;
+      border-radius: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+    }
+
+    .options button.active {
+      background: #6c63ff;
+      border-color: #6c63ff;
+    }
+
+    .generate {
+      width: 100%;
+      margin-top: 30px;
+      padding: 17px;
+      border: none;
+      border-radius: 12px;
+      background: #6c63ff;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .generate:hover {
+      opacity: 0.9;
+    }
+
+    .status {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      color: #aeb6c5;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .feature {
+      background: #111725;
+      border: 1px solid #252d40;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .feature .icon {
+      font-size: 30px;
+    }
+
+    .feature h3 {
+      margin: 10px 0;
+    }
+
+    .feature p {
+      color: #9da5b4;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .logo {
+        font-size: 25px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="header">
+      <div class="logo">🎬 Masri Video AI 🇪🇬</div>
+
+      <p class="subtitle">
+        اصنع فيديوهات بالذكاء الاصطناعي باللغة العربية واللهجة المصرية
+      </p>
+    </div>
+
+    <div class="card">
+
+      <label>💡 اكتب فكرة الفيديو</label>
+
+      <textarea
+        id="prompt"
+        placeholder="مثال: أسد وضبع قاعدين على قهوة مصرية وبيتكلموا بطريقة كوميدية..."
+      ></textarea>
+
+      <div class="section">
+
+        <label>🖼️ صورة مرجعية للشخصية</label>
+
+        <label class="upload">
+
+          <input
+            type="file"
+            id="image"
+            accept="image/*"
+          >
+
+          <span>📷</span>
+
+          <div>اضغط هنا لرفع صورة</div>
+
+        </label>
+
+      </div>
+
+      <div class="section">
+
+        <label>⏱️ مدة الفيديو</label>
+
+        <div class="options">
